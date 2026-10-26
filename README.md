@@ -1,75 +1,276 @@
-# React + TypeScript + Vite
+# Adhkar Toaster
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+مكوّن React لعرض الأذكار في إشعارات Sonner على فترات منتظمة. يدعم قائمة أذكار مخصصة، واختيار التصنيفات، وإعدادات Sonner، وحفظ تفضيلات المستخدم محلياً في المتصفح.
 
-Currently, two official plugins are available:
+اسم الحزمة هو `@ay-ub/adhkar-toaster`. المستودع مجهّز لإنتاج ملفات ESM وCommonJS وتعريفات TypeScript. لم يتم النشر إلى npm تلقائياً؛ النشر الفعلي يحتاج تسجيل الدخول إلى حساب npm الذي يملك النطاق `@ay-ub`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## المزايا
 
-## React Compiler
+- اختيار ذكر عشوائي من التصنيفات المفعّلة، مع تجنب تكرار الذكر السابق مباشرةً متى توفرت بدائل.
+- فاصل زمني قابل للضبط بالدقائق، مع إيقاف الجدولة عند تعطيلها أو عدم وجود أذكار في التصنيفات المحددة.
+- دعم بيانات أذكار خارجية يمررها المطور.
+- إظهار النص والمصدر وعدد التكرار في إشعار Sonner الافتراضي.
+- تخصيص إعدادات Toaster ودمجها مع إعدادات المستخدم المحفوظة.
+- اتجاه RTL افتراضي للأذكار، مع خيارات Sonner المعتادة.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## المتطلبات
 
-## Expanding the ESLint configuration
+- React وReact DOM 18 أو 19.
+- TypeScript عند استخدام الأنواع مباشرة.
+- مشاريع TypeScript تحتاج `@types/react` و`@types/react-dom` إذا لم تكن متوفرة لديها.
+- Sonner `^2.0.8`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+ثبّت الحزمة مع متطلباتها النظيرة:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install @ay-ub/adhkar-toaster sonner react react-dom
+# أو
+pnpm add @ay-ub/adhkar-toaster sonner react react-dom
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## الاستخدام الأساسي
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+يجب وضع المكوّن داخل `AdhkarSettingsProvider` لأن `AdhkarToaster` يقرأ الإعدادات من Context.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
+```tsx
+import { AdhkarSettingsProvider, AdhkarToaster } from "@ay-ub/adhkar-toaster";
+
+export function App() {
+  return (
+    <AdhkarSettingsProvider>
+      <AdhkarToaster />
+      <main>{/* بقية التطبيق */}</main>
+    </AdhkarSettingsProvider>
+  );
+}
+```
+
+التذكير متوقف افتراضياً. لتفعيله من واجهة التطبيق استخدم `useAdhkarSettings`، أو مرر `settings` مباشرة إلى المكوّن.
+
+## تمرير إعدادات من المطور
+
+`settings` يقبل إعدادات جزئية. القيم الممررة لها أولوية على الإعدادات المحفوظة في Context. إعدادات `sonner` و`sonner.toastOptions` تدمج بشكل جزئي، فلا تحتاج إلى إعادة إرسال جميع الخيارات.
+
+```tsx
+import type { AdhkarToasterConfig } from "@ay-ub/adhkar-toaster";
+
+const toasterConfig: AdhkarToasterConfig = {
+  enabled: true,
+  intervalMinutes: 15,
+  categories: ["general", "morning"],
+  sonner: {
+    position: "top-center",
+    dir: "rtl",
+    richColors: true,
+    toastOptions: {
+      duration: 6000,
     },
   },
-])
+};
 
+<AdhkarToaster settings={toasterConfig} />;
 ```
+
+يدعم JavaScript CommonJS أيضاً:
+
+```js
+const {
+  AdhkarSettingsProvider,
+  AdhkarToaster,
+} = require("@ay-ub/adhkar-toaster");
+```
+
+ومع TypeScript/NodeNext يختار مدير الحزم تعريفات `.d.ts` مع `import` وتعريفات `.d.cts` مع `require` تلقائياً.
+
+الـoverrides لا تكتب فوق إعدادات Context ولا تحفظها؛ إنها تخص هذا الاستخدام للمكوّن فقط. الإعدادات التفاعلية التي يغيّرها المستخدم عبر Context هي التي تحفظ محلياً.
+
+## تمرير أذكار خاصة
+
+استخدم `adhkarItems` لاستبدال القائمة الافتراضية بقائمة يملكها التطبيق. يجب أن يطابق كل عنصر نوع `Adhkar`.
+
+```tsx
+import type { Adhkar } from "@ay-ub/adhkar-toaster";
+
+const myAdhkar: Adhkar[] = [
+  {
+    id: "morning-tasbih",
+    category: "morning",
+    text: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+    repeat: 100,
+    source: "صحيح مسلم: 2691",
+  },
+  {
+    id: "custom-general-dhikr",
+    category: "general",
+    text: "الْحَمْدُ لِلَّهِ",
+    repeat: 1,
+    source: "ذكر من إعداد التطبيق",
+  },
+];
+
+<AdhkarToaster adhkarItems={myAdhkar} />;
+```
+
+`adhkarItems` اختيارية؛ إذا لم تمررها يستخدم المكوّن الأذكار المضمنة في الحزمة. يرشّح المكوّن القائمة بحسب `settings.categories`. استخدم معرّفاً فريداً لكل ذكر لتفادي التباس منع التكرار المتتابع.
+
+## مرجع المكوّن
+
+### `AdhkarToaster`
+
+| الخاصية       | النوع                 | الافتراضي       | الوصف                                                         |
+| ------------- | --------------------- | --------------- | ------------------------------------------------------------- |
+| `settings`    | `AdhkarToasterConfig` | إعدادات Context | إعدادات جزئية يحددها المطور. لها الأولوية على القيم المحفوظة. |
+| `adhkarItems` | `readonly Adhkar[]`   | القائمة المحلية | قائمة الأذكار المستخدمة للاختيار.                             |
+
+### `AdhkarToasterConfig`
+
+هذا النوع يسمح بتمرير أي subset من إعدادات `AdhkarSettings`:
+
+| الخاصية           | النوع                   | الافتراضي              | الوصف                                                                       |
+| ----------------- | ----------------------- | ---------------------- | --------------------------------------------------------------------------- |
+| `enabled`         | `boolean`               | `false`                | تشغيل أو إيقاف الجدولة.                                                     |
+| `intervalMinutes` | `number`                | `30`                   | المدة بين الإشعارات بالدقائق. يجب أن تكون أكبر من صفر.                      |
+| `categories`      | `AdhkarCategory[]`      | كل التصنيفات           | التصنيفات التي يسمح باختيار الأذكار منها. القائمة الفارغة توقف عرض الأذكار. |
+| `sonner`          | `Partial<ToasterProps>` | القيم الافتراضية أدناه | خصائص مكوّن Sonner `Toaster`.                                               |
+
+إذا لم تمرر `settings`، تستخدم الإعدادات في Context. أما إذا مررت قيمة واحدة فقط، فبقية القيم تظل من Context.
+
+### `Adhkar`
+
+```ts
+type Adhkar = {
+  id: string;
+  category: AdhkarCategory;
+  text: string;
+  repeat?: number;
+  source: string;
+};
+```
+
+| الحقل      | الوصف                                                                         |
+| ---------- | ----------------------------------------------------------------------------- |
+| `id`       | معرّف فريد للذكر، ويستخدم للمساعدة على عدم اختيار الذكر نفسه مرتين متتاليتين. |
+| `category` | تصنيف الذكر.                                                                  |
+| `text`     | النص الذي يظهر في عنوان الإشعار.                                              |
+| `repeat`   | عدد مرات التكرار الاختياري؛ يظهر في وصف الإشعار إذا تم تحديده.                |
+| `source`   | مصدر الذكر؛ يظهر في وصف الإشعار.                                              |
+
+### `AdhkarCategory`
+
+```ts
+type AdhkarCategory = "morning" | "evening" | "after-prayer" | "general";
+```
+
+هذه القيم هي التصنيفات المدعومة حالياً. إضافة تصنيف جديد تتطلب تحديث النوع والبيانات وأي واجهة تعرض التصنيفات.
+
+## إعدادات Sonner
+
+`settings.sonner` يقبل `Partial<ToasterProps>` من إصدار Sonner المثبت. الافتراضيات المستخدمة في المشروع:
+
+| الخاصية           | الافتراضي             | ملاحظات                                                   |
+| ----------------- | --------------------- | --------------------------------------------------------- |
+| `theme`           | `"light"`             | `"light"` أو `"dark"` أو `"system"`.                      |
+| `richColors`      | `false`               | ألوان الحالة الغنية.                                      |
+| `expand`          | `false`               | توسيع قائمة الإشعارات.                                    |
+| `visibleToasts`   | `3`                   | أقصى عدد للإشعارات الظاهرة.                               |
+| `id`              | `"adhkar-toaster"`    | معرّف Toaster؛ يستخدم أيضاً كـ`toasterId` للإشعار.        |
+| `position`        | `"bottom-right"`      | موضع الإشعارات.                                           |
+| `closeButton`     | `false`               | إظهار زر الإغلاق.                                         |
+| `offset`          | `"32px"`              | إزاحة Toaster. يقبل Sonner string أو number أو object.    |
+| `mobileOffset`    | `"16px"`              | إزاحة الشاشات الصغيرة. يقبل string أو number أو object.   |
+| `swipeDirections` | `["right", "bottom"]` | اتجاهات السحب المدعومة: `top`, `right`, `bottom`, `left`. |
+| `dir`             | `"rtl"`               | اتجاه محتوى Toaster: `"rtl"`, `"ltr"` أو `"auto"`.        |
+| `hotkey`          | `["altKey", "t"]`     | مصفوفة مفاتيح اختصار Sonner.                              |
+| `invert`          | `false`               | عكس ألوان الإشعار.                                        |
+| `toastOptions`    | `{ duration: 4000 }`  | خيارات Toast العامة، ومنها مدة العرض بالمللي ثانية.       |
+| `gap`             | `14`                  | المسافة بين الإشعارات.                                    |
+| `icons`           | `{}`                  | أيقونات Sonner المخصصة.                                   |
+
+يمكن مراجعة بقية الخصائص مباشرة في نوع `ToasterProps` الخاص بإصدار Sonner المستخدم. المكوّن يمرر إعدادات Sonner إلى `<Toaster />`، ويستخدم `toastOptions.duration` و`closeButton` و`id` أيضاً عند إنشاء إشعار الذكر.
+
+## Context والـHook
+
+### `AdhkarSettingsProvider`
+
+يوفر إعدادات مشتركة لتطبيق React. لفّ به الجزء الذي يحتوي `AdhkarToaster` أو ضعه حول التطبيق كاملاً:
+
+```tsx
+<AdhkarSettingsProvider>
+  <App />
+</AdhkarSettingsProvider>
+```
+
+يحفظ Provider الإعدادات التفاعلية في `localStorage` تحت المفتاح `adhkar-settings-v1`. إذا تعذر الوصول إلى التخزين أو كانت البيانات تالفة، يعود إلى القيم الافتراضية. بيانات الأذكار نفسها لا تحفظ في `localStorage`.
+
+### `useAdhkarSettings`
+
+```tsx
+const { settings, updateSettings, updateSonner, resetSettings } =
+  useAdhkarSettings();
+```
+
+| القيمة                    | الوصف                                                     |
+| ------------------------- | --------------------------------------------------------- |
+| `settings`                | كائن الإعدادات الحالي.                                    |
+| `updateSettings(updates)` | تحديث `enabled` أو `intervalMinutes` أو `categories`.     |
+| `updateSonner(updates)`   | تحديث خصائص Sonner؛ يدمج `toastOptions` مع القيم الحالية. |
+| `resetSettings()`         | إعادة جميع القيم المحفوظة إلى الافتراضي.                  |
+
+يجب استدعاء هذا الـHook داخل `AdhkarSettingsProvider`، وإلا يرمي خطأ واضحاً.
+
+## سلوك الجدولة والاختيار
+
+- لا يبدأ الجدول إلا إذا كانت `enabled` تساوي `true`.
+- أول إشعار يظهر بعد مرور مدة `intervalMinutes`، وليس فور التفعيل.
+- تُرشح الأذكار بحسب التصنيفات المحددة قبل الاختيار.
+- إذا كانت القائمة المرشحة فارغة فلن يظهر إشعار.
+- الاختيار عشوائي، ويحاول استبعاد الذكر الذي ظهر في المرة السابقة إذا توفر خيار آخر.
+- مدة ظهور إشعار الذكر من `sonner.toastOptions.duration`، والافتراضي `4000` مللي ثانية.
+- الإشعار الافتراضي من Sonner يعرض `text` في العنوان و`source` و`repeat` في الوصف.
+- إلغاء الجدولة يتم تلقائياً عند إيقاف المكوّن أو تغيير إعدادات الجدولة.
+
+## وحدات مساعدة داخلية
+
+هذه الوحدات موجودة في المصدر، لكنها ليست حالياً صادرات عامة من entry point لحزمة منشورة:
+
+```ts
+scheduleAdhkar(onTick, intervalMs): () => void
+selectAdhkar(items?, previousId?): Adhkar | null
+```
+
+`scheduleAdhkar` يبدأ مؤقتاً ويعيد دالة لإيقافه، ويرمي `RangeError` إذا كانت المدة غير موجبة أو غير منتهية. `selectAdhkar` يعيد `null` للقائمة الفارغة، ويستخدم القائمة الافتراضية إذا لم تمرر قائمة.
+
+## أوامر التطوير
+
+```bash
+pnpm dev       # تشغيل خادم التطوير
+pnpm build     # فحص TypeScript وبناء Vite
+pnpm lint      # تشغيل ESLint
+pnpm preview   # معاينة بناء الإنتاج
+```
+
+## بناء الحزمة ونشرها
+
+أوامر البناء:
+
+```bash
+pnpm build
+pnpm pack:check
+```
+
+ينتج البناء:
+
+- `dist/adhkar-toaster.js`: نسخة ESM للاستيراد عبر `import`.
+- `dist/adhkar-toaster.cjs`: نسخة CommonJS للاستخدام عبر `require`.
+- `dist/types/`: تعريفات TypeScript الخاصة بـESM.
+- `dist/types-cjs/`: تعريفات CommonJS بامتداد `.d.cts`.
+- `dist/style.css`: تنسيقات Sonner الزجاجية.
+
+النشر العام إلى npm بعد تسجيل الدخول:
+
+```bash
+npm login
+npm publish --access public
+```
+
+لإصدار لاحق، حدّث رقم النسخة أولاً. الحزمة تستخدم نطاق `@ay-ub` ويجب أن يكون هذا النطاق متاحاً لحساب npm الذي ينفذ النشر. لا ينفذ `pnpm build` أو `pnpm pack:check` عملية النشر.

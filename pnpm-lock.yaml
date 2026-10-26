@@ -7,16 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-      sonner:
-        specifier: ^2.0.8
-        version: 2.0.8(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -45,6 +35,15 @@ importers:
       globals:
         specifier: ^17.13.0
         version: 17.13.0
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+      sonner:
+        specifier: ^2.0.8
+        version: 2.0.8(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
