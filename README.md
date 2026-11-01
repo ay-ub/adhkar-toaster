@@ -1,3 +1,5 @@
+<div dir="rtl" align="right">
+
 # Adhkar Toaster
 
 مكوّن React لعرض الأذكار في إشعارات Sonner على فترات منتظمة. يدعم قائمة أذكار مخصصة، واختيار التصنيفات، وإعدادات Sonner، وحفظ تفضيلات المستخدم محلياً في المتصفح.
@@ -259,9 +261,4 @@ pnpm pack:check
 - `dist/types-cjs/`: تعريفات CommonJS بامتداد `.d.cts`.
 - `dist/style.css`: تنسيقات Sonner الزجاجية.
 
-النشر العام إلى npm بعد تسجيل الدخول:
-
-```bash
-npm login
-npm publish --access public
-```
+</div>
