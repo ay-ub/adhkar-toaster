@@ -13,10 +13,7 @@ const toasterSettings: AdhkarToasterConfig = {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AdhkarSettingsProvider>
-      <AdhkarToaster
-        settings={toasterSettings}
-        adhkarItems={[{ category: "after-prayer", id: "4", text: "ايوب" }]}
-      />
+      <AdhkarToaster settings={toasterSettings} />
     </AdhkarSettingsProvider>
   </StrictMode>,
 );
