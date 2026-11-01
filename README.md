@@ -96,15 +96,11 @@ const myAdhkar: Adhkar[] = [
     id: "morning-tasbih",
     category: "morning",
     text: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
-    repeat: 100,
-    source: "صحيح مسلم: 2691",
   },
   {
     id: "custom-general-dhikr",
     category: "general",
     text: "الْحَمْدُ لِلَّهِ",
-    repeat: 1,
-    source: "ذكر من إعداد التطبيق",
   },
 ];
 
@@ -142,8 +138,7 @@ type Adhkar = {
   id: string;
   category: AdhkarCategory;
   text: string;
-  repeat?: number;
-  source: string;
+  duration?: number;
 };
 ```
 
@@ -152,8 +147,7 @@ type Adhkar = {
 | `id`       | معرّف فريد للذكر، ويستخدم للمساعدة على عدم اختيار الذكر نفسه مرتين متتاليتين. |
 | `category` | تصنيف الذكر.                                                                  |
 | `text`     | النص الذي يظهر في عنوان الإشعار.                                              |
-| `repeat`   | عدد مرات التكرار الاختياري؛ يظهر في وصف الإشعار إذا تم تحديده.                |
-| `source`   | مصدر الذكر؛ يظهر في وصف الإشعار.                                              |
+| `duration` | مدة ظهور الإشعار بالمللي ثانية. إذا لم تحدد، تستخدم مدة Sonner الافتراضية.    |
 
 ### `AdhkarCategory`
 
@@ -225,8 +219,7 @@ const { settings, updateSettings, updateSonner, resetSettings } =
 - تُرشح الأذكار بحسب التصنيفات المحددة قبل الاختيار.
 - إذا كانت القائمة المرشحة فارغة فلن يظهر إشعار.
 - الاختيار عشوائي، ويحاول استبعاد الذكر الذي ظهر في المرة السابقة إذا توفر خيار آخر.
-- مدة ظهور إشعار الذكر من `sonner.toastOptions.duration`، والافتراضي `4000` مللي ثانية.
-- الإشعار الافتراضي من Sonner يعرض `text` في العنوان و`source` و`repeat` في الوصف.
+- مدة ظهور إشعار الذكر من `duration` عند تحديدها، وإلا من `sonner.toastOptions.duration`، والافتراضي `4000` مللي ثانية.
 - إلغاء الجدولة يتم تلقائياً عند إيقاف المكوّن أو تغيير إعدادات الجدولة.
 
 ## وحدات مساعدة داخلية
@@ -272,5 +265,3 @@ pnpm pack:check
 npm login
 npm publish --access public
 ```
-
-لإصدار لاحق، حدّث رقم النسخة أولاً. الحزمة تستخدم نطاق `@ay-ub` ويجب أن يكون هذا النطاق متاحاً لحساب npm الذي ينفذ النشر. لا ينفذ `pnpm build` أو `pnpm pack:check` عملية النشر.

@@ -6,7 +6,7 @@ export type Adhkar = {
   id: string;
   category: AdhkarCategory;
   text: string;
-  source: string;
+  duration?: number;
 };
 
 export type AdhkarSettings = {

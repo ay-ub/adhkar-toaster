@@ -48,7 +48,8 @@ export function AdhkarToaster({
 
       previousId.current = selected.id;
       toast(selected.text, {
-        duration: sonnerSettings.toastOptions?.duration ?? 4000,
+        duration:
+          selected.duration ?? sonnerSettings.toastOptions?.duration ?? 4000,
         closeButton: sonnerSettings.closeButton ?? false,
         toasterId: sonnerSettings.id,
         style: { direction: "rtl", textAlign: "right" },
