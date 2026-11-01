@@ -1,4 +1,4 @@
-<div dir="rtl" align="right">
+<div dir="ltr" align="left">
 
 # Adhkar Toaster
 
