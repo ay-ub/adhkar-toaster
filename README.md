@@ -1,4 +1,4 @@
-<div dir="ltr" align="left">
+<div dir="rtl" align="right">
 
 # Adhkar Toaster
 
@@ -24,15 +24,21 @@
 
 ثبّت الحزمة مع متطلباتها النظيرة:
 
+<div dir="ltr" align="left">
+
 ```bash
-npm install @ay-ub/adhkar-toaster sonner react react-dom
-# أو
-pnpm add @ay-ub/adhkar-toaster sonner react react-dom
+npm install @ay-ub/adhkar-toaster sonner
+# or
+pnpm add @ay-ub/adhkar-toaster sonner
 ```
+
+</div>
 
 ## الاستخدام الأساسي
 
 يجب وضع المكوّن داخل `AdhkarSettingsProvider` لأن `AdhkarToaster` يقرأ الإعدادات من Context.
+
+<div dir="ltr" align="left">
 
 ```tsx
 import { AdhkarSettingsProvider, AdhkarToaster } from "@ay-ub/adhkar-toaster";
@@ -47,11 +53,15 @@ export function App() {
 }
 ```
 
+</div>
+
 التذكير متوقف افتراضياً. لتفعيله من واجهة التطبيق استخدم `useAdhkarSettings`، أو مرر `settings` مباشرة إلى المكوّن.
 
 ## تمرير إعدادات من المطور
 
 `settings` يقبل إعدادات جزئية. القيم الممررة لها أولوية على الإعدادات المحفوظة في Context. إعدادات `sonner` و`sonner.toastOptions` تدمج بشكل جزئي، فلا تحتاج إلى إعادة إرسال جميع الخيارات.
+
+<div dir="ltr" align="left">
 
 ```tsx
 import type { AdhkarToasterConfig } from "@ay-ub/adhkar-toaster";
@@ -73,7 +83,11 @@ const toasterConfig: AdhkarToasterConfig = {
 <AdhkarToaster settings={toasterConfig} />;
 ```
 
+</div>
+
 يدعم JavaScript CommonJS أيضاً:
+
+<div dir="ltr" align="left">
 
 ```js
 const {
@@ -82,6 +96,8 @@ const {
 } = require("@ay-ub/adhkar-toaster");
 ```
 
+</div>
+
 ومع TypeScript/NodeNext يختار مدير الحزم تعريفات `.d.ts` مع `import` وتعريفات `.d.cts` مع `require` تلقائياً.
 
 الـoverrides لا تكتب فوق إعدادات Context ولا تحفظها؛ إنها تخص هذا الاستخدام للمكوّن فقط. الإعدادات التفاعلية التي يغيّرها المستخدم عبر Context هي التي تحفظ محلياً.
@@ -89,6 +105,8 @@ const {
 ## تمرير أذكار خاصة
 
 استخدم `adhkarItems` لاستبدال القائمة الافتراضية بقائمة يملكها التطبيق. يجب أن يطابق كل عنصر نوع `Adhkar`.
+
+<div dir="ltr" align="left">
 
 ```tsx
 import type { Adhkar } from "@ay-ub/adhkar-toaster";
@@ -108,6 +126,8 @@ const myAdhkar: Adhkar[] = [
 
 <AdhkarToaster adhkarItems={myAdhkar} />;
 ```
+
+</div>
 
 `adhkarItems` اختيارية؛ إذا لم تمررها يستخدم المكوّن الأذكار المضمنة في الحزمة. يرشّح المكوّن القائمة بحسب `settings.categories`. استخدم معرّفاً فريداً لكل ذكر لتفادي التباس منع التكرار المتتابع.
 
@@ -135,6 +155,8 @@ const myAdhkar: Adhkar[] = [
 
 ### `Adhkar`
 
+<div dir="ltr" align="left">
+
 ```ts
 type Adhkar = {
   id: string;
@@ -143,6 +165,8 @@ type Adhkar = {
   duration?: number;
 };
 ```
+
+</div>
 
 | الحقل      | الوصف                                                                         |
 | ---------- | ----------------------------------------------------------------------------- |
@@ -153,9 +177,13 @@ type Adhkar = {
 
 ### `AdhkarCategory`
 
+<div dir="ltr" align="left">
+
 ```ts
 type AdhkarCategory = "morning" | "evening" | "after-prayer" | "general";
 ```
+
+</div>
 
 هذه القيم هي التصنيفات المدعومة حالياً. إضافة تصنيف جديد تتطلب تحديث النوع والبيانات وأي واجهة تعرض التصنيفات.
 
@@ -190,20 +218,28 @@ type AdhkarCategory = "morning" | "evening" | "after-prayer" | "general";
 
 يوفر إعدادات مشتركة لتطبيق React. لفّ به الجزء الذي يحتوي `AdhkarToaster` أو ضعه حول التطبيق كاملاً:
 
+<div dir="ltr" align="left">
+
 ```tsx
 <AdhkarSettingsProvider>
   <App />
 </AdhkarSettingsProvider>
 ```
 
+</div>
+
 يحفظ Provider الإعدادات التفاعلية في `localStorage` تحت المفتاح `adhkar-settings-v1`. إذا تعذر الوصول إلى التخزين أو كانت البيانات تالفة، يعود إلى القيم الافتراضية. بيانات الأذكار نفسها لا تحفظ في `localStorage`.
 
 ### `useAdhkarSettings`
+
+<div dir="ltr" align="left">
 
 ```tsx
 const { settings, updateSettings, updateSonner, resetSettings } =
   useAdhkarSettings();
 ```
+
+</div>
 
 | القيمة                    | الوصف                                                     |
 | ------------------------- | --------------------------------------------------------- |
@@ -228,14 +264,20 @@ const { settings, updateSettings, updateSonner, resetSettings } =
 
 هذه الوحدات موجودة في المصدر، لكنها ليست حالياً صادرات عامة من entry point لحزمة منشورة:
 
+<div dir="ltr" align="left">
+
 ```ts
 scheduleAdhkar(onTick, intervalMs): () => void
 selectAdhkar(items?, previousId?): Adhkar | null
 ```
 
+</div>
+
 `scheduleAdhkar` يبدأ مؤقتاً ويعيد دالة لإيقافه، ويرمي `RangeError` إذا كانت المدة غير موجبة أو غير منتهية. `selectAdhkar` يعيد `null` للقائمة الفارغة، ويستخدم القائمة الافتراضية إذا لم تمرر قائمة.
 
 ## أوامر التطوير
+
+<div dir="ltr" align="left">
 
 ```bash
 pnpm dev       # تشغيل خادم التطوير
@@ -244,14 +286,20 @@ pnpm lint      # تشغيل ESLint
 pnpm preview   # معاينة بناء الإنتاج
 ```
 
+</div>
+
 ## بناء الحزمة ونشرها
 
 أوامر البناء:
+
+<div dir="ltr" align="left">
 
 ```bash
 pnpm build
 pnpm pack:check
 ```
+
+</div>
 
 ينتج البناء:
 
