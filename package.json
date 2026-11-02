@@ -1,6 +1,6 @@
 {
   "name": "@ay-ub/adhkar-toaster",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A customizable React adhkar reminder toaster powered by Sonner",
   "author": "ay-ub",
   "engines": {
